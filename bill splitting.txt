@@ -1,0 +1,77 @@
+
+import java.util.HashMap;
+
+public class BillSplitter {
+    public static void main(String[] args) {
+        String[][] services = {
+            {"LUNCH", "2500", "gopi"},
+            {"MOVIE TICKET", "1000", "naresh"},
+            {"TEA/COFFEE", "750", "satish", "chandra"}
+        };
+
+        HashMap<String, Integer> individualAmounts = new HashMap<String, Integer>();
+        individualAmounts.put("gopi", 0);
+        individualAmounts.put("naresh", 0);
+        individualAmounts.put("satish", 0);
+        individualAmounts.put("chandra", 0);
+        for (String[] service : services) {
+            int bill = Integer.parseInt(service[1]);
+            String paidBy = service[2];
+            int numPeople = service.length - 2;
+            int share = bill / numPeople;
+            for (int i = 2; i < service.length; i++) {
+                String person = service[i];
+                if (!person.equals(paidBy)) {
+                    individualAmounts.put(person, individualAmounts.get(person) + share);
+                }
+            }
+            individualAmounts.put(paidBy, individualAmounts.get(paidBy) + bill);
+        }
+
+        System.out.println("Total Amount for Each Service:");
+        for (String[] service : services) {
+            int bill = Integer.parseInt(service[1]);
+            System.out.println(service[0] + ": " + bill);
+        }
+
+        System.out.println("Total Amount for Each Individual:");
+        for (String person : individualAmounts.keySet()) {
+            System.out.println(person + ": " + individualAmounts.get(person));
+        }
+        System.out.println("Amounts to Pay/Receive:");
+        for (String person1 : individualAmounts.keySet()) {
+            for (String person2 : individualAmounts.keySet()) {
+                if (!person1.equals(person2)) {
+                    int amount1 = individualAmounts.get(person1);
+                    int amount2 = individualAmounts.get(person2);
+                    int diff = amount1 - amount2;
+                    if (diff > 0) {
+                        System.out.println(person1 + " needs to receive " + diff + " from " + person2);
+                    } else if (diff < 0) {
+                        System.out.println(person1 + " needs to pay " + (-diff) + " to " + person2);
+                    }
+                }
+            }
+        }
+    }
+}
+output:
+java -cp /tmp/NVceV6RuDz BillSplitter
+Total Amount for Each Service:
+LUNCH: 2500
+MOVIE TICKET: 1000
+TEA/COFFEE: 750
+Total Amount for Each Individual:
+gopi: 2500satish: 750naresh: 1000chandra: 375Amounts to Pay/Receive:gopi needs to receive 1750 from satish
+gopi needs to receive 1500 from naresh
+gopi needs to receive 2125 from chandra
+satish needs to pay 1750 to gopi
+satish needs to pay 250 to naresh
+satish needs to receive 375 from chandra
+naresh needs to pay 1500 to gopi
+naresh needs to receive 250 from satish
+naresh needs to receive 625 from chandra
+chandra needs to pay 2125 to gopi
+chandra needs to pay 375 to satish
+chandra needs to pay 625 to naresh
+
